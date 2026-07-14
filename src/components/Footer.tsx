@@ -35,7 +35,7 @@ export function Footer() {
         <div>
           <a href="#">使用条款</a>
           <a href="#">隐私政策</a>
-          <a href="#">站点数据政策</a>
+          <a href="#">Cookie 政策</a>
         </div>
       </div>
     </footer>

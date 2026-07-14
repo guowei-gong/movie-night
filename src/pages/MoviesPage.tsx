@@ -1,15 +1,8 @@
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ClockIcon,
-  HandThumbUpIcon,
-  PlusIcon,
-  SpeakerWaveIcon,
-} from "@heroicons/react/24/outline";
-import { PlayIcon, StarIcon } from "@heroicons/react/24/solid";
+import { ChevronRightIcon, ClockIcon, HandThumbUpIcon, PlusIcon, SpeakerWaveIcon } from "@heroicons/react/24/outline";
+import { StarIcon } from "@heroicons/react/24/solid";
+import { CarouselButton } from "../components/CarouselButton";
 import { Dots } from "../components/Dots";
+import { PlayButton } from "../components/PlayButton";
 import { TrialBanner } from "../components/TrialBanner";
 import { genres, type Genre } from "../data/catalog";
 import { asset } from "../lib/assets";
@@ -32,14 +25,6 @@ function ListingHero() {
     <section className="movier-hero" aria-labelledby="listing-hero-title">
       <img className="movier-hero-bg" src={asset("movier-demon-slayer.png")} alt="" />
       <div className="movier-hero-shade" />
-      <div className="movier-brand-row" aria-hidden="true">
-        <span>MOVIER</span>
-        <nav>
-          <a>首页</a>
-          <a>热门</a>
-        </nav>
-      </div>
-
       <div className="movier-hero-copy">
         <h1 id="listing-hero-title">鬼灭之刃 - 无限列车篇（2020）</h1>
         <div className="movier-rating-row" aria-label="五星评分和片长">
@@ -61,10 +46,7 @@ function ListingHero() {
         </div>
 
         <div className="movier-hero-actions">
-          <button className="button primary">
-            <PlayIcon className="svg-icon icon-18" />
-            立即播放
-          </button>
+          <PlayButton />
           <div className="movier-hero-icon-actions" aria-hidden="true">
             <button className="icon-box">
               <PlusIcon className="svg-icon icon-22" />
@@ -81,13 +63,9 @@ function ListingHero() {
 
       <p className="movier-quote">“挥动你的刀，终结这场噩梦。”</p>
       <div className="movier-hero-pagination" aria-hidden="true">
-        <button className="icon-box">
-          <ArrowLeftIcon className="svg-icon icon-arrow-left" strokeWidth={2} />
-        </button>
+        <CarouselButton direction="previous" label="上一部推荐" />
         <Dots />
-        <button className="icon-box">
-          <ArrowRightIcon className="svg-icon icon-arrow-right" strokeWidth={2} />
-        </button>
+        <CarouselButton direction="next" label="下一部推荐" />
       </div>
     </section>
   );
@@ -98,13 +76,9 @@ function SectionHeader({ title }: { title: string }) {
     <div className="section-header">
       <h2>{title}</h2>
       <div className="rail-controls" aria-hidden="true">
-        <button className="icon-box small">
-          <ArrowLeftIcon className="svg-icon icon-arrow-left" strokeWidth={2} />
-        </button>
+        <CarouselButton direction="previous" label={`上一组${title}`} className="small" />
         <Dots />
-        <button className="icon-box small">
-          <ArrowRightIcon className="svg-icon icon-arrow-right" strokeWidth={2} />
-        </button>
+        <CarouselButton direction="next" label={`下一组${title}`} className="small" />
       </div>
     </div>
   );
@@ -207,13 +181,13 @@ export function MoviesPage() {
           ))}
         </ContentRail>
 
-        <ContentRail title="热门剧集" className="movier-poster-rail">
+        <ContentRail title="热门剧集" className="movier-poster-rail" id="popular-shows">
           {trendingMovies.map((poster) => (
             <PosterCard poster={poster} key={`tv-${poster.title}`} />
           ))}
         </ContentRail>
 
-        <ContentRail title="按类型浏览" className="movier-genre-rail">
+        <ContentRail title="按类型浏览" className="movier-genre-rail" id="browse-genres">
           {genres.map((genre) => (
             <GenreCard genre={genre} key={genre.name} />
           ))}

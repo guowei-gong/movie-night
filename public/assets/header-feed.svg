@@ -1,0 +1,23 @@
+<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="20" height="21" fill="#F5F5F5"/>
+<g id="Generated Design">
+<rect width="1873" height="65" transform="translate(-1555 -12)" fill="white"/>
+<g id="Frame">
+<g id="Clip path group">
+<mask id="mask0_0_1" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="21">
+<g id="clip0">
+<path id="Vector" d="M0 0.742981H20V20.743H0V0.742981Z" fill="white"/>
+</g>
+</mask>
+<g mask="url(#mask0_0_1)">
+<g id="Group">
+<path id="Vector_2" d="M10.0002 10.743C7.699 10.743 5.8335 8.87747 5.8335 6.5763C5.8335 4.27512 7.699 2.40964 10.0002 2.40964V10.743Z" stroke="black" stroke-width="1.6" stroke-linejoin="round"/>
+<path id="Vector_3" d="M10.0001 10.743C10.0001 13.0441 8.13458 14.9096 5.83341 14.9096C3.53225 14.9096 1.66675 13.0441 1.66675 10.743H10.0001Z" stroke="black" stroke-width="1.6" stroke-linejoin="round"/>
+<path id="Vector_4" d="M10 10.743C10 8.44182 11.8655 6.57632 14.1667 6.57632C16.4679 6.57632 18.3333 8.44182 18.3333 10.743H10Z" stroke="black" stroke-width="1.6" stroke-linejoin="round"/>
+<path id="Vector_5" d="M10 10.743C12.3012 10.743 14.1667 12.6085 14.1667 14.9096C14.1667 17.2108 12.3012 19.0763 10 19.0763V10.743Z" stroke="black" stroke-width="1.6" stroke-linejoin="round"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+</svg>

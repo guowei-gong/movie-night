@@ -1,7 +1,5 @@
 import {
   CalendarDaysIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   FilmIcon,
   HandThumbUpIcon,
   LanguageIcon,
@@ -11,8 +9,9 @@ import {
   StarIcon as StarOutlineIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { PlayIcon } from "@heroicons/react/24/solid";
+import { CarouselButton } from "../components/CarouselButton";
 import { Dots } from "../components/Dots";
+import { PlayButton } from "../components/PlayButton";
 import { Stars } from "../components/Stars";
 import { TrialBanner } from "../components/TrialBanner";
 import { castImages, reviews } from "../data/movieDetail";
@@ -25,19 +24,16 @@ function MovieDetailHero() {
       <div className="detail-hero-vignette" />
       <div className="detail-hero-copy">
         <h1 id="movie-title">坎塔拉</h1>
-        <p>一个年轻人与印度南部村庄神秘森林中的自然、信仰和古老传说发生冲突。</p>
+        <p>一名年轻人与印度南部村庄神秘森林中的自然、信仰和古老传说发生冲突。</p>
         <div className="hero-controls">
-          <button className="button primary">
-            <PlayIcon className="svg-icon icon-18" />
-            立即播放
-          </button>
-          <button className="icon-box" aria-label="加入片单">
+          <PlayButton />
+          <button className="icon-box" aria-label="加入片单" type="button">
             <PlusIcon className="svg-icon icon-22" />
           </button>
-          <button className="icon-box" aria-label="喜欢">
+          <button className="icon-box" aria-label="喜欢这部电影" type="button">
             <HandThumbUpIcon className="svg-icon icon-22" />
           </button>
-          <button className="icon-box" aria-label="音量">
+          <button className="icon-box" aria-label="音频选项" type="button">
             <SpeakerWaveIcon className="svg-icon icon-22" />
           </button>
         </div>
@@ -64,12 +60,8 @@ function CastPanel() {
         ))}
       </div>
       <div className="panel-actions">
-        <button className="round-control" aria-label="上一组演员">
-          <ChevronLeftIcon className="svg-icon icon-20" />
-        </button>
-        <button className="round-control" aria-label="下一组演员">
-          <ChevronRightIcon className="svg-icon icon-20" />
-        </button>
+        <CarouselButton direction="previous" label="上一组演员" />
+        <CarouselButton direction="next" label="下一组演员" />
       </div>
     </Panel>
   );
@@ -78,15 +70,15 @@ function CastPanel() {
 function ReviewsPanel() {
   return (
     <Panel title="用户评论" className="reviews-panel">
-      <button className="review-button">
-        <PlusIcon className="svg-icon icon-18" />
-        添加评论
+      <button className="review-button" type="button">
+        <PlusIcon className="svg-icon icon-24" />
+        添加你的评论
       </button>
       <div className="review-grid">
         {reviews.map((review) => (
           <article className="review-card" key={review.name}>
             <div className="review-head">
-              <div>
+              <div className="review-author">
                 <h3>{review.name}</h3>
                 <p>{review.location}</p>
               </div>
@@ -100,13 +92,9 @@ function ReviewsPanel() {
         ))}
       </div>
       <div className="review-pager">
-        <button className="round-control" aria-label="上一页评论">
-          <ChevronLeftIcon className="svg-icon icon-20" />
-        </button>
+        <CarouselButton direction="previous" label="上一页评论" />
         <Dots />
-        <button className="round-control" aria-label="下一页评论">
-          <ChevronRightIcon className="svg-icon icon-20" />
-        </button>
+        <CarouselButton direction="next" label="下一页评论" />
       </div>
     </Panel>
   );
@@ -158,33 +146,33 @@ function PersonCard({ image, name, detail }: { image: string; name: string; deta
 
 function DetailSidebar() {
   return (
-    <aside className="detail-sidebar" aria-label="影片信息">
-      <InfoBlock icon={<CalendarDaysIcon className="svg-icon icon-22" />} title="上映年份">
+    <aside className="detail-sidebar" aria-label="电影信息">
+      <InfoBlock icon={<CalendarDaysIcon className="svg-icon icon-24" />} title="发行年份">
         <strong>2022</strong>
       </InfoBlock>
-      <InfoBlock icon={<LanguageIcon className="svg-icon icon-22" />} title="可用语言">
+      <InfoBlock icon={<LanguageIcon className="svg-icon icon-24" />} title="可用语言">
         <div className="tag-list">
           {["英语", "印地语", "泰米尔语", "泰卢固语", "卡纳达语"].map((tag) => (
             <span key={tag}>{tag}</span>
           ))}
         </div>
       </InfoBlock>
-      <InfoBlock icon={<StarOutlineIcon className="svg-icon icon-22" />} title="评分">
+      <InfoBlock icon={<StarOutlineIcon className="svg-icon icon-24" />} title="评分">
         <div className="score-grid">
           <ScoreCard label="IMDb" score="4.5" />
-          <ScoreCard label="StreamVibe" score="4.0" />
+          <ScoreCard label="StreamVibe" score="4" />
         </div>
       </InfoBlock>
-      <InfoBlock icon={<FilmIcon className="svg-icon icon-22" />} title="类型">
+      <InfoBlock icon={<FilmIcon className="svg-icon icon-24" />} title="类型">
         <div className="tag-list">
           <span>动作</span>
           <span>冒险</span>
         </div>
       </InfoBlock>
-      <InfoBlock icon={<UserIcon className="svg-icon icon-22" />} title="导演">
+      <InfoBlock icon={<UserIcon className="svg-icon icon-24" />} title="导演">
         <PersonCard image="detail-cast-1.png" name="瑞沙布·谢蒂" detail="来自印度" />
       </InfoBlock>
-      <InfoBlock icon={<MusicalNoteIcon className="svg-icon icon-22" />} title="音乐">
+      <InfoBlock icon={<MusicalNoteIcon className="svg-icon icon-24" />} title="音乐">
         <PersonCard image="detail-music.png" name="B. 阿贾尼什·洛克纳特" detail="来自印度" />
       </InfoBlock>
     </aside>

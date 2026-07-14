@@ -1,19 +1,41 @@
 import { ctaBackdrop } from "../data/site";
 import { asset } from "../lib/assets";
 
-export function TrialBanner() {
+type TrialBannerProps = {
+  id?: string;
+  title?: string;
+  description?: string;
+  actionLabel?: string;
+  actionHref?: string;
+  className?: string;
+};
+
+export function TrialBanner({
+  id = "messages",
+  title = "没找到想看的电影或电视剧？",
+  description = "给我们留言，说出你最想看的片名。我们会认真查看大家的推荐，把更多好电影、好剧集加入站点。",
+  actionLabel = "去留言",
+  actionHref = "#messages",
+  className = "",
+}: TrialBannerProps) {
   return (
-    <section className="trial-banner">
+    <section className={`trial-banner${className ? ` ${className}` : ""}`} id={id}>
       <div className="trial-backdrop" aria-hidden="true">
-        {ctaBackdrop.map((image, index) => (
-          <img src={asset(image)} alt="" key={`${image}-${index}`} />
+        {Array.from({ length: 3 }, (_, row) => (
+          <div className="trial-backdrop-row" key={row}>
+            {ctaBackdrop.map((image, index) => (
+              <img src={asset(image)} alt="" key={`${row}-${image}-${index}`} />
+            ))}
+          </div>
         ))}
       </div>
       <div className="trial-copy">
-        <h2>今天开始免费试用！</h2>
-        <p>立即解锁 StreamVibe 的完整片库，随时观看热门电影、剧集和独家内容。</p>
+        <h2>{title}</h2>
+        <p>{description}</p>
       </div>
-      <button className="button primary">开始免费试用</button>
+      <a className="button primary trial-action" href={actionHref}>
+        {actionLabel}
+      </a>
     </section>
   );
 }
