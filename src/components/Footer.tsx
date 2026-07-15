@@ -1,43 +1,9 @@
-import { ChatBubbleLeftRightIcon, LinkIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
-import { footerGroups } from "../data/site";
-
 export function Footer() {
   return (
     <footer className="site-footer">
-      <div className="footer-grid">
-        {footerGroups.map((group) => (
-          <div className="footer-group" key={group.title}>
-            <h3>{group.title}</h3>
-            {group.links.map((link) => (
-              <a href="#" key={link}>
-                {link}
-              </a>
-            ))}
-          </div>
-        ))}
-        <div className="footer-group">
-          <h3>关注我们</h3>
-          <div className="socials">
-            <a href="#" aria-label="社群主页">
-              <ChatBubbleLeftRightIcon className="svg-icon icon-18" />
-            </a>
-            <a href="#" aria-label="最新动态">
-              <PaperAirplaneIcon className="svg-icon icon-18" />
-            </a>
-            <a href="#" aria-label="商务合作">
-              <LinkIcon className="svg-icon icon-18" />
-            </a>
-          </div>
-        </div>
-      </div>
-      <div className="footer-bottom">
-        <p>@2023 StreamVibe，保留所有权利</p>
-        <div>
-          <a href="#">使用条款</a>
-          <a href="#">隐私政策</a>
-          <a href="#">Cookie 政策</a>
-        </div>
-      </div>
+      <p className="footer-disclaimer">
+        本站只提供 WEB 页面服务，本站不存储、不制作任何视频，资源均网络搜集，不承担任何由于内容的合法性及健康性所引起的争议和法律责任。 若本站收录内容侵犯了您的权益，请附说明联系邮箱 olevod.com@gmail.com，本站将第一时间处理，24 小时内删除。
+      </p>
     </footer>
   );
 }
