@@ -13,7 +13,8 @@ if (manifest.schemaVersion !== 1) throw new Error(`Unsupported schema version: $
 if (!manifest.dataVersion) throw new Error("Manifest is missing dataVersion");
 if (!manifest.playableTotal || !manifest.bucketSize) throw new Error("Manifest contains no playable catalog");
 
-const jsonFiles = (folder) => fs.readdirSync(path.join(root, folder)).filter((file) => file.endsWith(".json"));
+const jsonFiles = (folder) => fs.readdirSync(path.join(root, folder))
+  .filter((file) => !file.startsWith(".") && file.endsWith(".json"));
 const detailFiles = jsonFiles("details");
 const sourceFiles = jsonFiles("sources");
 if (!detailFiles.length || detailFiles.length !== sourceFiles.length) {

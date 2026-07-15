@@ -1,7 +1,6 @@
 import { useEffect } from "react";
-import { ChevronRightIcon, ClockIcon, HandThumbUpIcon, PlusIcon, SpeakerWaveIcon } from "@heroicons/react/24/outline";
-import { StarIcon } from "@heroicons/react/24/solid";
-import { Link } from "react-router-dom";
+import { ClockIcon, HeartIcon as HeartOutlineIcon } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartSolidIcon, StarIcon } from "@heroicons/react/24/solid";
 import { ErrorState, LoadingState } from "../components/AsyncState";
 import { CarouselButton } from "../components/CarouselButton";
 import { Dots } from "../components/Dots";
@@ -16,6 +15,7 @@ import type { HomeData, TitleDetail } from "../types/title";
 
 function ListingHero({ title }: { title: TitleDetail }) {
   const { isFavorite, toggleFavorite } = useLibrary();
+  const favorite = isFavorite(title.id);
   return (
     <section className="movier-hero" aria-labelledby="listing-hero-title">
       <img className="movier-hero-bg" src={coverUrl(title.cover_url)} alt="" />
@@ -35,17 +35,16 @@ function ListingHero({ title }: { title: TitleDetail }) {
         {title.description ? <div className="movier-overview"><p>{title.description}</p></div> : null}
         <div className="movier-hero-actions">
           <PlayButton to={`/play/${title.id}`} />
-          <div className="movier-hero-icon-actions">
-            <button className="icon-box" type="button" aria-label={isFavorite(title.id) ? "取消收藏" : "加入收藏"} onClick={() => toggleFavorite(title.id)}>
-              <PlusIcon className="svg-icon icon-22" />
-            </button>
-            <Link className="icon-box" to={`/title/${title.id}`} aria-label="查看详情">
-              <HandThumbUpIcon className="svg-icon icon-22" />
-            </Link>
-            <button className="icon-box" type="button" aria-label="音频由播放器控制" disabled>
-              <SpeakerWaveIcon className="svg-icon icon-22" />
-            </button>
-          </div>
+          <button
+            className={`icon-box${favorite ? " active" : ""}`}
+            type="button"
+            aria-label={favorite ? "取消收藏" : "加入收藏"}
+            onClick={() => toggleFavorite(title.id)}
+          >
+            {favorite
+              ? <HeartSolidIcon className="svg-icon icon-22" />
+              : <HeartOutlineIcon className="svg-icon icon-22" />}
+          </button>
         </div>
       </div>
       {title.status_text ? <p className="movier-quote">{title.status_text}</p> : null}
@@ -76,18 +75,6 @@ function ContentRail({ title, children, id }: { title: string; children: React.R
   );
 }
 
-function GenreCard({ name, titles }: { name: string; titles: TitleDetail[] }) {
-  if (!titles.length) return null;
-  return (
-    <Link className="genre-card" to={`/search?category=${encodeURIComponent(name)}`}>
-      <div className="poster-grid">
-        {titles.slice(0, 4).map((title) => <img src={coverUrl(title.cover_url)} alt="" loading="lazy" key={title.id} />)}
-      </div>
-      <div className="genre-caption"><strong>{name}</strong><ChevronRightIcon className="svg-icon icon-24" /></div>
-    </Link>
-  );
-}
-
 function Catalog({ home }: { home: HomeData }) {
   return (
     <section className="movier-catalog" aria-label="电影与剧集片库">
@@ -97,12 +84,6 @@ function Catalog({ home }: { home: HomeData }) {
       <ContentRail title="最近更新" id="latest-titles">
         {home.latest.slice(0, 10).map((title) => <TitleCard title={title} key={title.id} />)}
       </ContentRail>
-      <section className="content-rail movier-genre-rail" aria-labelledby="browse-genres">
-        <SectionHeader title="按类型浏览" />
-        <div className="rail" id="browse-genres">
-          {Object.entries(home.categories).map(([name, titles]) => <GenreCard name={name} titles={titles} key={name} />)}
-        </div>
-      </section>
     </section>
   );
 }

@@ -57,7 +57,7 @@ function write(file, contents) {
 const template = fs.readFileSync(path.join(distDir, "index.html"), "utf8");
 const manifest = JSON.parse(fs.readFileSync(path.join(dataDir, "manifest.json"), "utf8"));
 const titles = [];
-for (const file of fs.readdirSync(path.join(dataDir, "details")).filter((name) => name.endsWith(".json"))) {
+for (const file of fs.readdirSync(path.join(dataDir, "details")).filter((name) => !name.startsWith(".") && name.endsWith(".json"))) {
   const bucket = JSON.parse(fs.readFileSync(path.join(dataDir, "details", file), "utf8"));
   titles.push(...Object.values(bucket));
 }

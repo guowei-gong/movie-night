@@ -2327,23 +2327,6 @@ main {
   margin-top: 54px;
 }
 
-.movier-hero-actions a {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 6px;
-  color: var(--movier-orange);
-  font-size: 14px;
-  font-weight: 800;
-}
-
-.movier-hero-actions a::after {
-  display: block;
-  width: 72px;
-  height: 2px;
-  content: "";
-  background: var(--movier-orange);
-}
-
 .movies-page .button.primary {
   min-height: 48px;
   color: #0d0d0d;
@@ -4410,7 +4393,8 @@ main {
 
 /* Static catalog and local-library states. */
 .header-primary a.active,
-.header-utilities a.active {
+.header-utilities a.active,
+.mobile-nav-panel nav a.active {
   color: #ff8a2b;
 }
 
@@ -4618,29 +4602,6 @@ main {
   line-height: 1.25;
 }
 
-.catalog-search-form {
-  display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) auto;
-  gap: 14px;
-  align-items: center;
-  width: min(720px, 100%);
-  min-height: 60px;
-  margin-top: 20px;
-  padding: 8px 8px 8px 18px;
-  background: #1a1a1a;
-  border: 1px solid #2b2b2b;
-  border-radius: 8px;
-}
-
-.catalog-search-form input {
-  min-width: 0;
-  color: #ffffff;
-  background: transparent;
-  border: 0;
-  outline: 0;
-  font: inherit;
-}
-
 .catalog-card-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -4792,8 +4753,6 @@ main {
   .catalog-page-shell,
   .play-page { width: min(100% - 32px, 1320px); padding-top: 108px; }
   .catalog-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 12px; }
-  .catalog-search-form { grid-template-columns: 20px minmax(0, 1fr); }
-  .catalog-search-form .button { grid-column: 1 / -1; width: 100%; }
   .catalog-page-head h1 { font-size: 30px; }
   .cast-name-list { margin-top: 20px; }
   .show-episode-row.no-thumb { grid-template-columns: 38px 44px minmax(0, 1fr); }

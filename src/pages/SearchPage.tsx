@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { EmptyState, ErrorState, LoadingState } from "../components/AsyncState";
 import { Footer } from "../components/Footer";
@@ -8,10 +7,9 @@ import { searchTitles } from "../data/staticCatalogRepository";
 import { useCatalogPage, useSearchIndex } from "../hooks/useCatalogData";
 
 export function SearchPage() {
-  const [params, setParams] = useSearchParams();
+  const [params] = useSearchParams();
   const query = params.get("q")?.trim() ?? "";
   const category = params.get("category")?.trim() ?? "";
-  const [input, setInput] = useState(query);
   const searchResource = useSearchIndex(Boolean(query));
   const categoryResource = useCatalogPage(category || undefined, 1, "latest");
 
@@ -21,15 +19,8 @@ export function SearchPage() {
   const heading = query ? `“${query}”的搜索结果` : category ? `${category}片库` : "搜索片库";
 
   useEffect(() => {
-    setInput(query);
     document.title = `${heading} - Movie Night`;
-  }, [heading, query]);
-
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const keyword = input.trim();
-    if (keyword) setParams({ q: keyword });
-  }
+  }, [heading]);
 
   return (
     <>
@@ -37,11 +28,6 @@ export function SearchPage() {
         <section className="catalog-page-head">
           <span>探索片库</span>
           <h1>{heading}</h1>
-          <form className="catalog-search-form" onSubmit={submit}>
-            <MagnifyingGlassIcon className="svg-icon icon-24" />
-            <input value={input} onChange={(event) => setInput(event.target.value)} placeholder="输入片名、演员或导演" aria-label="搜索片库" />
-            <button className="button primary" type="submit">搜索</button>
-          </form>
         </section>
 
         {loading ? <LoadingState label="正在检索片库" /> : null}

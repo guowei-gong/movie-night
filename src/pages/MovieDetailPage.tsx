@@ -3,10 +3,11 @@ import {
   CalendarDaysIcon,
   FilmIcon,
   GlobeAltIcon,
-  HeartIcon,
+  HeartIcon as HeartOutlineIcon,
   StarIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 import { Footer } from "../components/Footer";
 import { PlayButton } from "../components/PlayButton";
 import { TrialBanner } from "../components/TrialBanner";
@@ -38,6 +39,7 @@ function splitValues(value: string) {
 
 export function MovieDetailPage({ title }: { title: TitleDetail }) {
   const { isFavorite, toggleFavorite } = useLibrary();
+  const favorite = isFavorite(title.id);
   const actors = splitValues(title.actors);
   const genres = title.genre && title.genre !== "未知" ? splitValues(title.genre) : [];
 
@@ -58,12 +60,14 @@ export function MovieDetailPage({ title }: { title: TitleDetail }) {
             <div className="hero-controls">
               <PlayButton to={`/play/${title.id}`} />
               <button
-                className={`icon-box${isFavorite(title.id) ? " active" : ""}`}
-                aria-label={isFavorite(title.id) ? "取消收藏" : "加入收藏"}
+                className={`icon-box${favorite ? " active" : ""}`}
+                aria-label={favorite ? "取消收藏" : "加入收藏"}
                 type="button"
                 onClick={() => toggleFavorite(title.id)}
               >
-                <HeartIcon className="svg-icon icon-22" />
+                {favorite
+                  ? <HeartSolidIcon className="svg-icon icon-22" />
+                  : <HeartOutlineIcon className="svg-icon icon-22" />}
               </button>
             </div>
           </div>

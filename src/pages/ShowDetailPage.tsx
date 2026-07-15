@@ -2,12 +2,12 @@ import { useEffect, type ReactNode } from "react";
 import {
   CalendarDaysIcon,
   GlobeAltIcon,
-  HeartIcon,
+  HeartIcon as HeartOutlineIcon,
   Squares2X2Icon,
   StarIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { PlayIcon } from "@heroicons/react/24/solid";
+import { HeartIcon as HeartSolidIcon, PlayIcon } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 import { ErrorState } from "../components/AsyncState";
 import { Footer } from "../components/Footer";
@@ -65,6 +65,7 @@ function SidebarBlock({ icon, title, children }: { icon: ReactNode; title: strin
 export function ShowDetailPage({ title }: { title: TitleDetail }) {
   const { data: source, loading: sourceLoading, error: sourceError } = useSourceData(title.id);
   const { isFavorite, toggleFavorite } = useLibrary();
+  const favorite = isFavorite(title.id);
   const actors = splitValues(title.actors);
   const genres = title.genre && title.genre !== "未知" ? splitValues(title.genre) : [];
 
@@ -82,8 +83,10 @@ export function ShowDetailPage({ title }: { title: TitleDetail }) {
             {title.description ? <p>{title.description}</p> : null}
             <div className="show-hero-controls">
               <PlayButton to={`/play/${title.id}`} />
-              <button className={`icon-box${isFavorite(title.id) ? " active" : ""}`} type="button" aria-label={isFavorite(title.id) ? "取消收藏" : "加入收藏"} onClick={() => toggleFavorite(title.id)}>
-                <HeartIcon className="svg-icon icon-22" />
+              <button className={`icon-box${favorite ? " active" : ""}`} type="button" aria-label={favorite ? "取消收藏" : "加入收藏"} onClick={() => toggleFavorite(title.id)}>
+                {favorite
+                  ? <HeartSolidIcon className="svg-icon icon-22" />
+                  : <HeartOutlineIcon className="svg-icon icon-22" />}
               </button>
             </div>
           </div>

@@ -1,13 +1,14 @@
 import { useState, type FormEvent } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { asset } from "../lib/assets";
 
 const primaryNavigation = [
-  { label: "首页", href: "/" },
-  { label: "电影", href: "/search?category=电影" },
-  { label: "剧集", href: "/search?category=剧集" },
-  { label: "动漫", href: "/search?category=动漫" },
+  { label: "首页", href: "/", category: null },
+  { label: "电影", href: "/search?category=电影", category: "电影" },
+  { label: "剧集", href: "/search?category=剧集", category: "剧集" },
+  { label: "动漫", href: "/search?category=动漫", category: "动漫" },
+  { label: "综艺", href: "/search?category=综艺", category: "综艺" },
 ] as const;
 
 const utilityNavigation = [
@@ -49,6 +50,13 @@ function SearchForm({ mobile = false, onNavigate }: { mobile?: boolean; onNaviga
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  const activeCategory = new URLSearchParams(location.search).get("category");
+
+  function isPrimaryActive(item: (typeof primaryNavigation)[number]) {
+    if (item.category === null) return location.pathname === item.href;
+    return location.pathname === "/search" && activeCategory === item.category;
+  }
 
   return (
     <header className="site-header">
@@ -56,9 +64,14 @@ export function Header() {
         <div className="header-leading">
           <nav className="header-primary" aria-label="主导航">
             {primaryNavigation.map((item) => (
-              <NavLink className={({ isActive }) => isActive ? "active" : undefined} to={item.href} key={item.label}>
+              <Link
+                className={isPrimaryActive(item) ? "active" : undefined}
+                aria-current={isPrimaryActive(item) ? "page" : undefined}
+                to={item.href}
+                key={item.label}
+              >
                 {item.label}
-              </NavLink>
+              </Link>
             ))}
           </nav>
         </div>
@@ -92,8 +105,21 @@ export function Header() {
         <div className={`mobile-nav-panel${menuOpen ? " open" : ""}`} id="mobile-navigation">
           <SearchForm mobile onNavigate={() => setMenuOpen(false)} />
           <nav aria-label="移动端导航">
-            {[...primaryNavigation, ...utilityNavigation].map((item) => (
-              <Link to={item.href} key={item.label} onClick={() => setMenuOpen(false)}>{item.label}</Link>
+            {primaryNavigation.map((item) => (
+              <Link
+                className={isPrimaryActive(item) ? "active" : undefined}
+                aria-current={isPrimaryActive(item) ? "page" : undefined}
+                to={item.href}
+                key={item.label}
+                onClick={() => setMenuOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+            {utilityNavigation.map((item) => (
+              <NavLink to={item.href} key={item.label} onClick={() => setMenuOpen(false)}>
+                {item.label}
+              </NavLink>
             ))}
           </nav>
         </div>
