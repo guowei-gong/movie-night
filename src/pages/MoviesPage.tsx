@@ -1,72 +1,54 @@
+import { useEffect } from "react";
 import { ChevronRightIcon, ClockIcon, HandThumbUpIcon, PlusIcon, SpeakerWaveIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
+import { Link } from "react-router-dom";
+import { ErrorState, LoadingState } from "../components/AsyncState";
 import { CarouselButton } from "../components/CarouselButton";
 import { Dots } from "../components/Dots";
+import { Footer } from "../components/Footer";
 import { PlayButton } from "../components/PlayButton";
+import { TitleCard } from "../components/TitleCard";
 import { TrialBanner } from "../components/TrialBanner";
-import { genres, type Genre } from "../data/catalog";
-import { asset } from "../lib/assets";
+import { useHomeData } from "../hooks/useCatalogData";
+import { useLibrary } from "../lib/libraryContext";
+import { coverUrl } from "../lib/media";
+import type { HomeData, TitleDetail } from "../types/title";
 
-type Poster = {
-  title: string;
-  image: string;
-};
-
-const trendingMovies: Poster[] = [
-  { title: "鬼灭之刃：无限列车篇", image: "movier-demon-slayer.png" },
-  { title: "末日激战", image: "movier-outside-wire.png" },
-  { title: "哥斯拉大战金刚", image: "movier-godzilla-kong.png" },
-  { title: "真人快打", image: "movier-mortal-kombat.png" },
-  { title: "复仇者联盟：终局之战", image: "movier-avengers-faded.png" },
-];
-
-function ListingHero() {
+function ListingHero({ title }: { title: TitleDetail }) {
+  const { isFavorite, toggleFavorite } = useLibrary();
   return (
     <section className="movier-hero" aria-labelledby="listing-hero-title">
-      <img className="movier-hero-bg" src={asset("movier-demon-slayer.png")} alt="" />
+      <img className="movier-hero-bg" src={coverUrl(title.cover_url)} alt="" />
       <div className="movier-hero-shade" />
       <div className="movier-hero-copy">
-        <h1 id="listing-hero-title">鬼灭之刃 - 无限列车篇（2020）</h1>
-        <div className="movier-rating-row" aria-label="五星评分和片长">
-          <span className="movier-stars" aria-hidden="true">
-            {Array.from({ length: 5 }, (_, index) => (
-              <StarIcon className="svg-icon icon-16" key={index} />
-            ))}
-          </span>
-          <span>
-            <ClockIcon className="svg-icon icon-16" />
-            1小时57分
-          </span>
+        <span className="movier-kicker">今日推荐 · {title.category}</span>
+        <h1 id="listing-hero-title">{title.title}{title.year > 0 ? `（${title.year}）` : ""}</h1>
+        <div className="movier-rating-row" aria-label="影片评分与状态">
+          {title.score > 0 ? (
+            <span className="movier-stars">
+              <StarIcon className="svg-icon icon-16" />
+              {title.score.toFixed(1)}
+            </span>
+          ) : null}
+          {title.status_text ? <span><ClockIcon className="svg-icon icon-16" />{title.status_text}</span> : null}
         </div>
-
-        <div className="movier-overview">
-          <p>
-            炭治郎与伊之助、善逸一同登上无限列车，和炎柱炼狱杏寿郎并肩执行新的任务，追查并击败折磨乘客的恶鬼。
-          </p>
-        </div>
-
+        {title.description ? <div className="movier-overview"><p>{title.description}</p></div> : null}
         <div className="movier-hero-actions">
-          <PlayButton />
-          <div className="movier-hero-icon-actions" aria-hidden="true">
-            <button className="icon-box">
+          <PlayButton to={`/play/${title.id}`} />
+          <div className="movier-hero-icon-actions">
+            <button className="icon-box" type="button" aria-label={isFavorite(title.id) ? "取消收藏" : "加入收藏"} onClick={() => toggleFavorite(title.id)}>
               <PlusIcon className="svg-icon icon-22" />
             </button>
-            <button className="icon-box">
+            <Link className="icon-box" to={`/title/${title.id}`} aria-label="查看详情">
               <HandThumbUpIcon className="svg-icon icon-22" />
-            </button>
-            <button className="icon-box">
+            </Link>
+            <button className="icon-box" type="button" aria-label="音频由播放器控制" disabled>
               <SpeakerWaveIcon className="svg-icon icon-22" />
             </button>
           </div>
         </div>
       </div>
-
-      <p className="movier-quote">“挥动你的刀，终结这场噩梦。”</p>
-      <div className="movier-hero-pagination" aria-hidden="true">
-        <CarouselButton direction="previous" label="上一部推荐" />
-        <Dots />
-        <CarouselButton direction="next" label="下一部推荐" />
-      </div>
+      {title.status_text ? <p className="movier-quote">{title.status_text}</p> : null}
     </section>
   );
 }
@@ -84,117 +66,63 @@ function SectionHeader({ title }: { title: string }) {
   );
 }
 
-function PosterCard({ poster, featured = false }: { poster: Poster; featured?: boolean }) {
+function ContentRail({ title, children, id }: { title: string; children: React.ReactNode; id?: string }) {
+  const headingId = id ?? title;
   return (
-    <article className={`movier-poster-card ${featured ? "featured" : ""}`}>
-      <img src={asset(poster.image)} alt={poster.title} />
-      <strong>{poster.title}</strong>
-    </article>
-  );
-}
-
-function GenreCard({ genre }: { genre: Genre }) {
-  return (
-    <article className={`genre-card ${genre.tag ? "featured" : ""}`}>
-      <div className="poster-grid">
-        {genre.images.map((image) => (
-          <img src={asset(image)} alt="" key={image} />
-        ))}
-      </div>
-      <div className="genre-caption">
-        <div>
-          {genre.tag && <span>{genre.tag}</span>}
-          <strong>{genre.name}</strong>
-        </div>
-        <ChevronRightIcon className="svg-icon icon-24" />
-      </div>
-    </article>
-  );
-}
-
-function ContentRail({
-  title,
-  children,
-  className = "",
-  id,
-}: {
-  title: string;
-  children: React.ReactNode;
-  className?: string;
-  id?: string;
-}) {
-  const headingId = id ?? title.replace(/\s+/g, "-").toLowerCase();
-
-  return (
-    <section className={`content-rail ${className}`} aria-labelledby={headingId} id={id}>
+    <section className="content-rail movier-poster-rail" aria-labelledby={headingId} id={id}>
       <SectionHeader title={title} />
       <div className="rail">{children}</div>
     </section>
   );
 }
 
-function MovierFooter() {
-  const groups = [
-    {
-      title: "产品",
-      links: ["关于 Movier", "会员方案", "移动应用", "观看设备"],
-    },
-    {
-      title: "资源",
-      links: ["帮助中心", "热门电影", "热门剧集"],
-    },
-    {
-      title: "公司",
-      links: ["关于我们", "加入我们", "联系我们", "媒体合作"],
-    },
-    {
-      title: "条款",
-      links: ["隐私政策", "服务条款"],
-    },
-  ];
-
+function GenreCard({ name, titles }: { name: string; titles: TitleDetail[] }) {
+  if (!titles.length) return null;
   return (
-    <footer className="movier-footer">
-      <strong>MOVIER</strong>
-      {groups.map((group) => (
-        <div className="movier-footer-group" key={group.title}>
-          <h2>{group.title}</h2>
-          {group.links.map((link) => (
-            <a href="#" key={link}>
-              {link}
-            </a>
-          ))}
+    <Link className="genre-card" to={`/search?category=${encodeURIComponent(name)}`}>
+      <div className="poster-grid">
+        {titles.slice(0, 4).map((title) => <img src={coverUrl(title.cover_url)} alt="" loading="lazy" key={title.id} />)}
+      </div>
+      <div className="genre-caption"><strong>{name}</strong><ChevronRightIcon className="svg-icon icon-24" /></div>
+    </Link>
+  );
+}
+
+function Catalog({ home }: { home: HomeData }) {
+  return (
+    <section className="movier-catalog" aria-label="电影与剧集片库">
+      <ContentRail title="高分热播" id="trending-titles">
+        {home.hot.slice(0, 10).map((title) => <TitleCard title={title} key={title.id} />)}
+      </ContentRail>
+      <ContentRail title="最近更新" id="latest-titles">
+        {home.latest.slice(0, 10).map((title) => <TitleCard title={title} key={title.id} />)}
+      </ContentRail>
+      <section className="content-rail movier-genre-rail" aria-labelledby="browse-genres">
+        <SectionHeader title="按类型浏览" />
+        <div className="rail" id="browse-genres">
+          {Object.entries(home.categories).map(([name, titles]) => <GenreCard name={name} titles={titles} key={name} />)}
         </div>
-      ))}
-    </footer>
+      </section>
+    </section>
   );
 }
 
 export function MoviesPage() {
+  const { data: home, loading, error } = useHomeData();
+  useEffect(() => { document.title = "Movie Night - 在线电影、剧集、动漫与综艺"; }, []);
+
+  if (loading) return <LoadingState />;
+  if (error) return <ErrorState message={error.message} />;
+  if (!home) return <LoadingState />;
+
   return (
-    <main className="movies-page">
-      <ListingHero />
-      <section className="movier-catalog" aria-label="电影与剧集片库">
-        <ContentRail title="热门电影" className="movier-poster-rail" id="trending-movies">
-          {trendingMovies.map((poster) => (
-            <PosterCard poster={poster} key={poster.title} />
-          ))}
-        </ContentRail>
-
-        <ContentRail title="热门剧集" className="movier-poster-rail" id="popular-shows">
-          {trendingMovies.map((poster) => (
-            <PosterCard poster={poster} key={`tv-${poster.title}`} />
-          ))}
-        </ContentRail>
-
-        <ContentRail title="按类型浏览" className="movier-genre-rail" id="browse-genres">
-          {genres.map((genre) => (
-            <GenreCard genre={genre} key={genre.name} />
-          ))}
-        </ContentRail>
-      </section>
-      <TrialBanner />
-      <MovierFooter />
-    </main>
+    <>
+      <main className="movies-page">
+        {home.hero ? <ListingHero title={home.hero} /> : null}
+        <Catalog home={home} />
+        <TrialBanner />
+      </main>
+      <Footer />
+    </>
   );
 }

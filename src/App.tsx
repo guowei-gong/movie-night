@@ -1,25 +1,31 @@
-import { Footer } from "./components/Footer";
+import { lazy, Suspense } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { LoadingState } from "./components/AsyncState";
 import { Header } from "./components/Header";
-import { MovieDetailPage } from "./pages/MovieDetailPage";
+import { LibraryPage } from "./pages/LibraryPage";
 import { MoviesPage } from "./pages/MoviesPage";
-import { ShowDetailPage } from "./pages/ShowDetailPage";
+import { NotFoundPage } from "./pages/NotFoundPage";
+import { SearchPage } from "./pages/SearchPage";
+import { TitleDetailPage } from "./pages/TitleDetailPage";
+
+const PlayPage = lazy(() => import("./pages/PlayPage").then((module) => ({ default: module.PlayPage })));
 
 export function App() {
-  const pathname = window.location.pathname;
-  const isMovieDetailPage = pathname.startsWith("/movie/kantara");
-  const isShowDetailPage = pathname.startsWith("/shows");
-
-  document.title = isShowDetailPage
-    ? "StreamVibe - 怪奇物语"
-    : isMovieDetailPage
-      ? "StreamVibe - 坎塔拉"
-      : "Movier - 电影与剧集";
-
   return (
     <>
       <Header />
-      {isShowDetailPage ? <ShowDetailPage /> : isMovieDetailPage ? <MovieDetailPage /> : <MoviesPage />}
-      {isMovieDetailPage && <Footer />}
+      <Suspense fallback={<LoadingState label="正在加载页面" />}>
+        <Routes>
+          <Route path="/" element={<MoviesPage />} />
+          <Route path="/movies" element={<Navigate to="/" replace />} />
+          <Route path="/title/:id" element={<TitleDetailPage />} />
+          <Route path="/play/:id" element={<PlayPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/favorites" element={<LibraryPage mode="favorites" />} />
+          <Route path="/history" element={<LibraryPage mode="history" />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
     </>
   );
 }

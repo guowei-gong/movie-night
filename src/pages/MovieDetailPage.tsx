@@ -1,48 +1,20 @@
+import { useEffect, type ReactNode } from "react";
 import {
   CalendarDaysIcon,
   FilmIcon,
-  HandThumbUpIcon,
-  LanguageIcon,
-  MusicalNoteIcon,
-  PlusIcon,
-  SpeakerWaveIcon,
-  StarIcon as StarOutlineIcon,
+  GlobeAltIcon,
+  HeartIcon,
+  StarIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { CarouselButton } from "../components/CarouselButton";
-import { Dots } from "../components/Dots";
+import { Footer } from "../components/Footer";
 import { PlayButton } from "../components/PlayButton";
-import { Stars } from "../components/Stars";
 import { TrialBanner } from "../components/TrialBanner";
-import { castImages, reviews } from "../data/movieDetail";
-import { asset } from "../lib/assets";
+import { useLibrary } from "../lib/libraryContext";
+import { coverUrl } from "../lib/media";
+import type { TitleDetail } from "../types/title";
 
-function MovieDetailHero() {
-  return (
-    <section className="detail-hero" aria-labelledby="movie-title">
-      <img className="detail-hero-image" src={asset("detail-kantara-hero.png")} alt="" />
-      <div className="detail-hero-vignette" />
-      <div className="detail-hero-copy">
-        <h1 id="movie-title">坎塔拉</h1>
-        <p>一名年轻人与印度南部村庄神秘森林中的自然、信仰和古老传说发生冲突。</p>
-        <div className="hero-controls">
-          <PlayButton />
-          <button className="icon-box" aria-label="加入片单" type="button">
-            <PlusIcon className="svg-icon icon-22" />
-          </button>
-          <button className="icon-box" aria-label="喜欢这部电影" type="button">
-            <HandThumbUpIcon className="svg-icon icon-22" />
-          </button>
-          <button className="icon-box" aria-label="音频选项" type="button">
-            <SpeakerWaveIcon className="svg-icon icon-22" />
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Panel({ title, children, className = "" }: { title: string; children: React.ReactNode; className?: string }) {
+function Panel({ title, children, className = "" }: { title: string; children: ReactNode; className?: string }) {
   return (
     <section className={`detail-panel ${className}`}>
       <div className="panel-title">{title}</div>
@@ -51,151 +23,73 @@ function Panel({ title, children, className = "" }: { title: string; children: R
   );
 }
 
-function CastPanel() {
-  return (
-    <Panel title="演员阵容" className="cast-panel">
-      <div className="cast-strip">
-        {castImages.map((image, index) => (
-          <img src={asset(image)} alt={`演员 ${index + 1}`} key={image} />
-        ))}
-      </div>
-      <div className="panel-actions">
-        <CarouselButton direction="previous" label="上一组演员" />
-        <CarouselButton direction="next" label="下一组演员" />
-      </div>
-    </Panel>
-  );
-}
-
-function ReviewsPanel() {
-  return (
-    <Panel title="用户评论" className="reviews-panel">
-      <button className="review-button" type="button">
-        <PlusIcon className="svg-icon icon-24" />
-        添加你的评论
-      </button>
-      <div className="review-grid">
-        {reviews.map((review) => (
-          <article className="review-card" key={review.name}>
-            <div className="review-head">
-              <div className="review-author">
-                <h3>{review.name}</h3>
-                <p>{review.location}</p>
-              </div>
-              <div className="rating-pill">
-                <Stars score={review.score} />
-                <span>{review.score}</span>
-              </div>
-            </div>
-            <p>{review.text}</p>
-          </article>
-        ))}
-      </div>
-      <div className="review-pager">
-        <CarouselButton direction="previous" label="上一页评论" />
-        <Dots />
-        <CarouselButton direction="next" label="下一页评论" />
-      </div>
-    </Panel>
-  );
-}
-
-function InfoBlock({
-  icon,
-  title,
-  children,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  children: React.ReactNode;
-}) {
+function InfoBlock({ icon, title, children }: { icon: ReactNode; title: string; children: ReactNode }) {
   return (
     <div className="info-block">
-      <div className="info-title">
-        {icon}
-        <span>{title}</span>
-      </div>
+      <div className="info-title">{icon}<span>{title}</span></div>
       {children}
     </div>
   );
 }
 
-function ScoreCard({ label, score }: { label: string; score: string }) {
-  return (
-    <div className="score-card">
-      <strong>{label}</strong>
-      <div>
-        <Stars score={score} />
-        <span>{score}</span>
-      </div>
-    </div>
-  );
+function splitValues(value: string) {
+  return value.split(/\s*[/,|]\s*/).map((item) => item.trim()).filter(Boolean);
 }
 
-function PersonCard({ image, name, detail }: { image: string; name: string; detail: string }) {
-  return (
-    <div className="person-card">
-      <img src={asset(image)} alt={name} />
-      <div>
-        <strong>{name}</strong>
-        <span>{detail}</span>
-      </div>
-    </div>
-  );
-}
+export function MovieDetailPage({ title }: { title: TitleDetail }) {
+  const { isFavorite, toggleFavorite } = useLibrary();
+  const actors = splitValues(title.actors);
+  const genres = title.genre && title.genre !== "未知" ? splitValues(title.genre) : [];
 
-function DetailSidebar() {
-  return (
-    <aside className="detail-sidebar" aria-label="电影信息">
-      <InfoBlock icon={<CalendarDaysIcon className="svg-icon icon-24" />} title="发行年份">
-        <strong>2022</strong>
-      </InfoBlock>
-      <InfoBlock icon={<LanguageIcon className="svg-icon icon-24" />} title="可用语言">
-        <div className="tag-list">
-          {["英语", "印地语", "泰米尔语", "泰卢固语", "卡纳达语"].map((tag) => (
-            <span key={tag}>{tag}</span>
-          ))}
-        </div>
-      </InfoBlock>
-      <InfoBlock icon={<StarOutlineIcon className="svg-icon icon-24" />} title="评分">
-        <div className="score-grid">
-          <ScoreCard label="IMDb" score="4.5" />
-          <ScoreCard label="StreamVibe" score="4" />
-        </div>
-      </InfoBlock>
-      <InfoBlock icon={<FilmIcon className="svg-icon icon-24" />} title="类型">
-        <div className="tag-list">
-          <span>动作</span>
-          <span>冒险</span>
-        </div>
-      </InfoBlock>
-      <InfoBlock icon={<UserIcon className="svg-icon icon-24" />} title="导演">
-        <PersonCard image="detail-cast-1.png" name="瑞沙布·谢蒂" detail="来自印度" />
-      </InfoBlock>
-      <InfoBlock icon={<MusicalNoteIcon className="svg-icon icon-24" />} title="音乐">
-        <PersonCard image="detail-music.png" name="B. 阿贾尼什·洛克纳特" detail="来自印度" />
-      </InfoBlock>
-    </aside>
-  );
-}
+  useEffect(() => {
+    document.title = `${title.title} - Movie Night`;
+  }, [title.title]);
 
-export function MovieDetailPage() {
   return (
-    <main className="detail-page">
-      <MovieDetailHero />
-      <section className="detail-layout">
-        <div className="detail-main">
-          <Panel title="简介" className="description-panel">
-            <p className="description-copy">
-              一名年轻人在印度南部村庄的神秘森林中与自然、信仰和民俗传统发生激烈碰撞。随着冲突升级，他必须面对土地、神灵与族群之间被埋藏许久的秘密。
-            </p>
-          </Panel>
-          <CastPanel />
-          <ReviewsPanel />
-        </div>
-        <DetailSidebar />
-      </section>
-      <TrialBanner />
-    </main>
+    <>
+      <main className="detail-page">
+        <section className="detail-hero" aria-labelledby="movie-title">
+          <img className="detail-hero-image" src={coverUrl(title.cover_url)} alt="" />
+          <div className="detail-hero-vignette" />
+          <div className="detail-hero-copy">
+            <span className="detail-kicker">{title.category}{title.status_text ? ` · ${title.status_text}` : ""}</span>
+            <h1 id="movie-title">{title.title}</h1>
+            {title.description ? <p>{title.description}</p> : null}
+            <div className="hero-controls">
+              <PlayButton to={`/play/${title.id}`} />
+              <button
+                className={`icon-box${isFavorite(title.id) ? " active" : ""}`}
+                aria-label={isFavorite(title.id) ? "取消收藏" : "加入收藏"}
+                type="button"
+                onClick={() => toggleFavorite(title.id)}
+              >
+                <HeartIcon className="svg-icon icon-22" />
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section className="detail-layout">
+          <div className="detail-main">
+            {title.description ? <Panel title="简介" className="description-panel"><p className="description-copy">{title.description}</p></Panel> : null}
+            {actors.length ? (
+              <Panel title="演员阵容" className="cast-panel">
+                <div className="cast-name-list">{actors.map((actor) => <span key={actor}>{actor}</span>)}</div>
+              </Panel>
+            ) : null}
+          </div>
+
+          <aside className="detail-sidebar" aria-label="影片信息">
+            {title.year > 0 ? <InfoBlock icon={<CalendarDaysIcon className="svg-icon icon-24" />} title="发行年份"><strong>{title.year}</strong></InfoBlock> : null}
+            {title.area && title.area !== "未知" ? <InfoBlock icon={<GlobeAltIcon className="svg-icon icon-24" />} title="地区"><strong>{title.area}</strong></InfoBlock> : null}
+            {title.score > 0 ? <InfoBlock icon={<StarIcon className="svg-icon icon-24" />} title="评分"><strong className="score-value">{title.score.toFixed(1)}</strong></InfoBlock> : null}
+            {genres.length ? <InfoBlock icon={<FilmIcon className="svg-icon icon-24" />} title="类型"><div className="tag-list">{genres.map((genre) => <span key={genre}>{genre}</span>)}</div></InfoBlock> : null}
+            {title.director ? <InfoBlock icon={<UserIcon className="svg-icon icon-24" />} title="导演"><strong>{title.director}</strong></InfoBlock> : null}
+          </aside>
+        </section>
+        <TrialBanner />
+      </main>
+      <Footer />
+    </>
   );
 }
