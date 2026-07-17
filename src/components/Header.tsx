@@ -2,13 +2,11 @@ import { useState, type FormEvent } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { asset } from "../lib/assets";
+import { categoryPath, seoCategories } from "../lib/categories";
 
 const primaryNavigation = [
-  { label: "首页", href: "/", category: null },
-  { label: "电影", href: "/search?category=电影", category: "电影" },
-  { label: "剧集", href: "/search?category=剧集", category: "剧集" },
-  { label: "动漫", href: "/search?category=动漫", category: "动漫" },
-  { label: "综艺", href: "/search?category=综艺", category: "综艺" },
+  { label: "首页", href: "/" },
+  ...seoCategories.map((category) => ({ label: category.name, href: categoryPath(category.slug) })),
 ] as const;
 
 const utilityNavigation = [
@@ -51,11 +49,9 @@ function SearchForm({ mobile = false, onNavigate }: { mobile?: boolean; onNaviga
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-  const activeCategory = new URLSearchParams(location.search).get("category");
 
   function isPrimaryActive(item: (typeof primaryNavigation)[number]) {
-    if (item.category === null) return location.pathname === item.href;
-    return location.pathname === "/search" && activeCategory === item.category;
+    return location.pathname === item.href;
   }
 
   return (

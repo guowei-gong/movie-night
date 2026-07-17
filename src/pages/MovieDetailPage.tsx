@@ -10,9 +10,11 @@ import {
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 import { Footer } from "../components/Footer";
 import { PlayButton } from "../components/PlayButton";
+import { RelatedTitles } from "../components/RelatedTitles";
 import { TrialBanner } from "../components/TrialBanner";
 import { useLibrary } from "../lib/libraryContext";
 import { coverUrl } from "../lib/media";
+import { titleFactSummary, titleSeoHeading, titleSeoTitle } from "../lib/titleSeo";
 import type { TitleDetail } from "../types/title";
 
 function Panel({ title, children, className = "" }: { title: string; children: ReactNode; className?: string }) {
@@ -42,10 +44,11 @@ export function MovieDetailPage({ title }: { title: TitleDetail }) {
   const favorite = isFavorite(title.id);
   const actors = splitValues(title.actors);
   const genres = title.genre && title.genre !== "未知" ? splitValues(title.genre) : [];
+  const summary = title.description || titleFactSummary(title);
 
   useEffect(() => {
-    document.title = `${title.title} - Movie Night`;
-  }, [title.title]);
+    document.title = titleSeoTitle(title);
+  }, [title]);
 
   return (
     <>
@@ -55,8 +58,8 @@ export function MovieDetailPage({ title }: { title: TitleDetail }) {
           <div className="detail-hero-vignette" />
           <div className="detail-hero-copy">
             <span className="detail-kicker">{title.category}{title.status_text ? ` · ${title.status_text}` : ""}</span>
-            <h1 id="movie-title">{title.title}</h1>
-            {title.description ? <p>{title.description}</p> : null}
+            <h1 id="movie-title">{titleSeoHeading(title)}</h1>
+            <p>{summary}</p>
             <div className="hero-controls">
               <PlayButton to={`/play/${title.id}`} />
               <button
@@ -75,7 +78,7 @@ export function MovieDetailPage({ title }: { title: TitleDetail }) {
 
         <section className="detail-layout">
           <div className="detail-main">
-            {title.description ? <Panel title="简介" className="description-panel"><p className="description-copy">{title.description}</p></Panel> : null}
+            <Panel title="影片介绍" className="description-panel"><p className="description-copy">{summary}</p></Panel>
             {actors.length ? (
               <Panel title="演员阵容" className="cast-panel">
                 <div className="cast-name-list">{actors.map((actor) => <span key={actor}>{actor}</span>)}</div>
@@ -91,6 +94,7 @@ export function MovieDetailPage({ title }: { title: TitleDetail }) {
             {title.director ? <InfoBlock icon={<UserIcon className="svg-icon icon-24" />} title="导演"><strong>{title.director}</strong></InfoBlock> : null}
           </aside>
         </section>
+        <RelatedTitles titleId={title.id} category={title.category} />
         <TrialBanner />
       </main>
       <Footer />

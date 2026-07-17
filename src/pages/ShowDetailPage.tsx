@@ -12,10 +12,12 @@ import { Link } from "react-router-dom";
 import { ErrorState } from "../components/AsyncState";
 import { Footer } from "../components/Footer";
 import { PlayButton } from "../components/PlayButton";
+import { RelatedTitles } from "../components/RelatedTitles";
 import { TrialBanner } from "../components/TrialBanner";
 import { useSourceData } from "../hooks/useCatalogData";
 import { useLibrary } from "../lib/libraryContext";
 import { coverUrl } from "../lib/media";
+import { titleFactSummary, titleSeoHeading, titleSeoTitle } from "../lib/titleSeo";
 import type { TitleDetail, TitleEpisode } from "../types/title";
 
 function splitValues(value: string) {
@@ -68,8 +70,9 @@ export function ShowDetailPage({ title }: { title: TitleDetail }) {
   const favorite = isFavorite(title.id);
   const actors = splitValues(title.actors);
   const genres = title.genre && title.genre !== "未知" ? splitValues(title.genre) : [];
+  const summary = title.description || titleFactSummary(title);
 
-  useEffect(() => { document.title = `${title.title} - Movie Night`; }, [title.title]);
+  useEffect(() => { document.title = titleSeoTitle(title); }, [title]);
 
   return (
     <>
@@ -79,8 +82,8 @@ export function ShowDetailPage({ title }: { title: TitleDetail }) {
           <div className="show-detail-hero-shade" />
           <div className="show-detail-hero-copy">
             <span className="detail-kicker">{title.category}{title.status_text ? ` · ${title.status_text}` : ""}</span>
-            <h1 id="show-title">{title.title}</h1>
-            {title.description ? <p>{title.description}</p> : null}
+            <h1 id="show-title">{titleSeoHeading(title)}</h1>
+            <p>{summary}</p>
             <div className="show-hero-controls">
               <PlayButton to={`/play/${title.id}`} />
               <button className={`icon-box${favorite ? " active" : ""}`} type="button" aria-label={favorite ? "取消收藏" : "加入收藏"} onClick={() => toggleFavorite(title.id)}>
@@ -97,7 +100,7 @@ export function ShowDetailPage({ title }: { title: TitleDetail }) {
             {sourceLoading ? <SectionShell title="季数与剧集" className="show-seasons-panel"><p className="inline-state">正在加载剧集...</p></SectionShell> : null}
             {sourceError ? <SectionShell title="季数与剧集" className="show-seasons-panel"><ErrorState message={sourceError.message} /></SectionShell> : null}
             {source?.episodes.length ? <SeasonsPanel titleId={title.id} episodes={source.episodes} /> : null}
-            {title.description ? <SectionShell title="简介" className="show-description-panel"><p>{title.description}</p></SectionShell> : null}
+            <SectionShell title="剧集介绍" className="show-description-panel"><p>{summary}</p></SectionShell>
             {actors.length ? <SectionShell title="演员阵容" className="show-cast-panel"><div className="cast-name-list">{actors.map((actor) => <span key={actor}>{actor}</span>)}</div></SectionShell> : null}
           </div>
 
@@ -109,6 +112,7 @@ export function ShowDetailPage({ title }: { title: TitleDetail }) {
             {title.director ? <SidebarBlock icon={<UserIcon className="svg-icon icon-24" />} title="导演"><strong className="show-sidebar-value">{title.director}</strong></SidebarBlock> : null}
           </aside>
         </section>
+        <RelatedTitles titleId={title.id} category={title.category} />
         <TrialBanner />
       </main>
       <Footer />

@@ -18,6 +18,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<MoviesPage />} />
           <Route path="/movies" element={<Navigate to="/" replace />} />
+          <Route path="/category/:categorySlug" element={<SearchPage />} />
           <Route path="/title/:id" element={<TitleDetailPage />} />
           <Route path="/play/:id" element={<PlayPage />} />
           <Route path="/search" element={<SearchPage />} />
